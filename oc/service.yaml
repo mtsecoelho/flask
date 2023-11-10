@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: flask
+  namespace: default
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: flask

@@ -1,0 +1,56 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: flask
+  namespace: default
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - container
+        from:
+          kind: ImageStreamTag
+          namespace: default
+          name: 'flask:latest'
+        lastTriggeredImage: >-
+          image-registry.openshift-image-registry.svc:5000/default/flask@sha256:9a03965cbb39e4e62d0a1c9106a001e539dcae73c91b20afd795840395e046a5
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: flask
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: flask
+    spec:
+      containers:
+        - name: container
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/default/flask@sha256:9a03965cbb39e4e62d0a1c9106a001e539dcae73c91b20afd795840395e046a5
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
