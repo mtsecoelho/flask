@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.8
+FROM openshift/python:3.8
 
 WORKDIR /python-docker
 
